@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Provider\Base;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Database;
@@ -10,16 +11,30 @@ class FirebaseController extends Controller
 {
     protected $database;
 
+    // public function __construct()
+    // {
+    //     $factory = (new Factory)
+    //     ->withServiceAccount(storage_path('app/firebase/firebase_credentials.json'))
+    //     ->withDatabaseUri('https://fir-crudsql-default-rtdb.firebaseio.com/');
+
+    //     $this->database = $factory->createDatabase();
+    // }
+
     public function __construct()
     {
-        $factory = (new Factory)
-        ->withServiceAccount(storage_path('app/firebase/firebase_credentials.json'))
-        ->withDatabaseUri('https://fir-crudsql-default-rtdb.firebaseio.com/');
 
-        $this->database = $factory->createDatabase();
+    $factory = (new Factory)
+    ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')))
+    ->withDatabaseUri(env('FIREBASE_DATABASE_URL'));
+
+    $this->database = $factory->createDatabase();
+
     }
 
 
+    // {
+    //     throw new \Exception('Not implemented');
+    // }
 
     public function saveData($node,$data)
     {
@@ -83,6 +98,12 @@ public function getLatestCitiesData($node, $limit = 10)
     ->orderByKey()
     ->limitToLast($limit)
     ->getValue();
+}
+
+public function getDatabase()
+{
+    return $this->database;
+
 }
 
 }
